@@ -1,0 +1,6 @@
+notes.md
+**/*.tfstate
+**/*.terraform
+**/*.terraform.lock.hcl
+**/*.backup
+**/.local

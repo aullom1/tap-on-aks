@@ -17,6 +17,11 @@ env:
   AZURE_SP_CLIENT_ID: ${{ secrets.AZURE_SP_CLIENT_ID }}
   AZURE_SP_CLIENT_SECRET: ${{ secrets.AZURE_SP_CLIENT_SECRET }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_ACCESS_KEY }}
+  TF_VAR_azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+  TF_VAR_azure_subscription_id: 
+  TF_VAR_azure_sp_client_id: ${{ secrets.AZURE_SP_CLIENT_ID }}
+  TF_VAR_azure_sp_client_secret: ${{ secrets.AZURE_SP_CLIENT_SECRET }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -35,17 +40,19 @@ jobs:
       #   run: echo Hello, world!
 
       # Runs a set of commands using the runners shell
-      - name: Install pivnet cli
+      - name: 'Install tool: pivnet cli'
         run: |
-          wget -O pivnet https://github.com/pivotal-cf/pivnet-cli/releases/download/v3.0.1/pivnet-linux-amd64-3.0.1
+          wget -nv -O pivnet https://github.com/pivotal-cf/pivnet-cli/releases/download/v3.0.1/pivnet-linux-amd64-3.0.1
           chmod +x pivnet
           sudo mv pivnet /usr/local/bin
           pivnet version
       
       - name: Azure login
-        run: az login --service-principal -u $AZURE_SP_CLIENT_ID -p $AZURE_SP_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+        run: |
+          account=$(az login --service-principal -u $AZURE_SP_CLIENT_ID -p $AZURE_SP_CLIENT_SECRET --tenant $AZURE_TENANT_ID)
+          export TF_VAR_azure_subscription_id=$(echo $account | jq -r .id)
 
-      - name: Install tanzu cli
+      - name: 'Install tool: tanzu cli'
         run: |
           PIVNET_API_TOKEN=$(az keyvault secret show -n pivnet-api-token --vault-name kv-tanzu | jq -r .value)
           pivnet login --api-token $PIVNET_API_TOKEN
@@ -59,4 +66,20 @@ jobs:
           tanzu version
           tanzu plugin install --local cli all
           tanzu plugin list --local cli all
+
+      - name: 'Install tool: cluster essentials'
+        run: |
+          pivnet download-product-files --product-slug='tanzu-cluster-essentials' --release-version='1.3.0' --product-file-id=1330470
+          mkdir $HOME/tanzu-cluster-essentials
+          tar -xvf tanzu-cluster-essentials-linux-amd64-1.3.0.tgz -C $HOME/tanzu-cluster-essentials
       
+      - name: Get terraform output
+        run: |
+          export RESOURCE_GROUP=$(terraform output resource_group_name)
+          export VIEW_CLUSTER_NAME=$(terraform output view_cluster_name)
+        
+      - name: Install cluster essentials on 'view' cluster
+        run: |
+          az aks get-credentials -g $RESOURCE_GROUP -n $VIEW_CLUSTER_NAME --admin
+          kubectl get ns
+
