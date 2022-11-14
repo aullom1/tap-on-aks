@@ -78,13 +78,13 @@ jobs:
         run: |
           cd terraform
           terraform init
-          export RESOURCE_GROUP=$(terraform output --raw resource_group_name)
-          export VIEW_CLUSTER_NAME=$(terraform output --raw view_cluster_name)
+          echo "RESOURCE_GROUP=$(terraform output --raw resource_group_name)" >> $GITHUB_ENV
+          echo "VIEW_CLUSTER_NAME=$(terraform output --raw view_cluster_name)" >> $GITHUB_ENV
         
       - name: Install cluster essentials on 'view' cluster
         run: |
-          [[ -z "RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
-          [[ -z "VIEW_CLUSTER_NAME" ]] && echo 'VIEW_CLUSTER_NAME must be set.' && exit 1
+          [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
+          [[ -z "$VIEW_CLUSTER_NAME" ]] && echo 'VIEW_CLUSTER_NAME must be set.' && exit 1
           az aks get-credentials -g $RESOURCE_GROUP -n $VIEW_CLUSTER_NAME --admin
           kubectl get ns
 
