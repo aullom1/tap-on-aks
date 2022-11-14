@@ -24,3 +24,8 @@ resource "azurerm_kubernetes_cluster" "default" {
     profile = var.cluster_profile
   }
 }
+
+output "cluster_name" {
+  value = azurerm_kubernetes_cluster.default.name
+  
+}
