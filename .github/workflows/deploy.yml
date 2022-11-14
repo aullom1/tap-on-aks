@@ -75,6 +75,8 @@ jobs:
       
       - name: Get terraform output
         run: |
+          cd terraform
+          terraform init
           export RESOURCE_GROUP=$(terraform output resource_group_name)
           export VIEW_CLUSTER_NAME=$(terraform output view_cluster_name)
         
