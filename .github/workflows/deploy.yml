@@ -22,6 +22,10 @@ env:
   TF_VAR_azure_subscription_id: 
   TF_VAR_azure_sp_client_id: ${{ secrets.AZURE_SP_CLIENT_ID }}
   TF_VAR_azure_sp_client_secret: ${{ secrets.AZURE_SP_CLIENT_SECRET }}
+  INSTALL_BUNDLE: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:e00f33b92d418f49b1af79f42cb13d6765f1c8c731f4528dfff8343af042dc3e
+  INSTALL_REGISTRY_HOSTNAME: registry.tanzu.vmware.com
+  INSTALL_REGISTRY_USERNAME: ${{ secrets.INSTALL_REGISTRY_USERNAME }}
+  INSTALL_REGISTRY_PASSWORD: ${{ secrets.INSTALL_REGISTRY_PASSWORD }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -86,5 +90,6 @@ jobs:
           [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
           [[ -z "$VIEW_CLUSTER_NAME" ]] && echo 'VIEW_CLUSTER_NAME must be set.' && exit 1
           az aks get-credentials -g $RESOURCE_GROUP -n $VIEW_CLUSTER_NAME --admin
-          kubectl get ns
+          cd $HOME/tanzu-cluster-essentials
+          ./install.sh --yes
 
