@@ -111,3 +111,10 @@ jobs:
             --wait
           tanzu package repository get tanzu-tap-repository --namespace tap-install
           tanzu package available list --namespace tap-install
+
+      - name: 'Deploy TAP profile: view'
+        run: |
+          # az aks get-credentials -g $RESOURCE_GROUP -n $VIEW_CLUSTER_NAME --admin
+          tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file $HOME/tap/view-values.yaml -n tap-install
+          tanzu package installed get tap -n tap-install
+          tanzu package installed list -A
