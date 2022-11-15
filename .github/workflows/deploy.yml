@@ -106,7 +106,7 @@ jobs:
             --yes \
             --namespace tap-install
           tanzu package repository add tanzu-tap-repository \
-            --url ${INSTALL_REGISTRY_HOSTNAME}/tap-packages:$TAP_VERSION \
+            --url ${INSTALL_REGISTRY_HOSTNAME}/tanzu-application-platform/tap-packages:$TAP_VERSION \
             --namespace tap-install \
             --wait
           tanzu package repository get tanzu-tap-repository --namespace tap-install
