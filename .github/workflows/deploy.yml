@@ -97,7 +97,7 @@ jobs:
       - name: Add TAP package repository
         run: |
           az aks get-credentials -g $RESOURCE_GROUP -n $VIEW_CLUSTER_NAME --admin
-          kubectl create ns tap-install
+          [[ -z "$(kubectl get ns | grep 'tap-install')" ]] && kubectl create ns tap-install
           tanzu secret registry add tap-registry \
             --username ${INSTALL_REGISTRY_USERNAME} \
             --password ${INSTALL_REGISTRY_PASSWORD} \
