@@ -1,0 +1,49 @@
+profile: view
+ceip_policy_disclosed: FALSE-OR-TRUE-VALUE # Installation fails if this is not set to true. Not a string.
+
+shared:
+  ingress_domain: "INGRESS-DOMAIN"
+  kubernetes_distribution: "openshift" # To be passed only for Openshift. Defaults to "".
+  ca_cert_data: | # To be passed if using custom certificates.
+    -----BEGIN CERTIFICATE-----
+    MIIFXzCCA0egAwIBAgIJAJYm37SFocjlMA0GCSqGSIb3DQEBDQUAMEY...
+    -----END CERTIFICATE-----
+
+contour:
+  envoy:
+    service:
+      type: LoadBalancer # NodePort can be used if your Kubernetes cluster doesn't support LoadBalancing.
+
+tap_gui:
+  service_type: ClusterIP
+  app_config:
+    app:
+      baseUrl: http://tap-gui.INGRESS-DOMAIN
+    catalog:
+      locations:
+        - type: url
+          target: https://GIT-CATALOG-URL/catalog-info.yaml
+    backend:
+      baseUrl: http://tap-gui.INGRESS-DOMAIN
+      cors:
+        origin: http://tap-gui.INGRESS-DOMAIN
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: CLUSTER-URL
+              name: CLUSTER-NAME # Build profile cluster can go here.
+              authProvider: serviceAccount
+              serviceAccountToken: CLUSTER-TOKEN
+              skipTLSVerify: TRUE-OR-FALSE-VALUE
+            - url: CLUSTER-URL
+              name: CLUSTER-NAME # Run profile cluster can go here.
+              authProvider: serviceAccount
+              serviceAccountToken: CLUSTER-TOKEN
+              skipTLSVerify: TRUE-OR-FALSE-VALUE
+
+appliveview:
+  ingressEnabled: true
+  sslDisabled: TRUE-OR-FALSE-VALUE

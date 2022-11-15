@@ -11,11 +11,6 @@ resource "azurerm_kubernetes_cluster" "default" {
     os_disk_size_gb = 30
   }
 
-  # service_principal {
-  #   client_id     = var.azure_sp_client_id
-  #   client_secret = var.azure_sp_client_secret
-  # }
-
   identity {
     type = "SystemAssigned"
   }
