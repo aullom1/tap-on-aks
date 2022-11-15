@@ -66,12 +66,13 @@ jobs:
           mkdir $HOME/tanzu
           tar -xvf tanzu-framework-linux-amd64.tar -C $HOME/tanzu
           export TANZU_CLI_NO_INIT=true
-          cd $HOME/tanzu
+          pushd $HOME/tanzu
           export VERSION=v0.25.0
           sudo install cli/core/$VERSION/tanzu-core-linux_amd64 /usr/local/bin/tanzu
           tanzu version
           tanzu plugin install --local cli all
           tanzu plugin list --local cli all
+          popd
 
       - name: 'Install tool: cluster essentials'
         run: |
@@ -81,18 +82,20 @@ jobs:
       
       - name: Get terraform output
         run: |
-          cd terraform
+          pushd terraform
           terraform init
           echo "RESOURCE_GROUP=$(terraform output --raw resource_group_name)" >> $GITHUB_ENV
           echo "VIEW_CLUSTER_NAME=$(terraform output --raw view_cluster_name)" >> $GITHUB_ENV
+          popd
         
       - name: Install cluster essentials on 'view' cluster
         run: |
           [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
           [[ -z "$VIEW_CLUSTER_NAME" ]] && echo 'VIEW_CLUSTER_NAME must be set.' && exit 1
           az aks get-credentials -g $RESOURCE_GROUP -n $VIEW_CLUSTER_NAME --admin
-          cd $HOME/tanzu-cluster-essentials
+          pushd $HOME/tanzu-cluster-essentials
           ./install.sh --yes
+          popd
 
       - name: Add TAP package repository
         run: |
@@ -115,6 +118,8 @@ jobs:
       - name: 'Deploy TAP profile: view'
         run: |
           # az aks get-credentials -g $RESOURCE_GROUP -n $VIEW_CLUSTER_NAME --admin
-          tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file $HOME/tap/view-values.yaml -n tap-install
+          pushd tap
+          tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file view-values.yaml -n tap-install
+          popd
           tanzu package installed get tap -n tap-install
           tanzu package installed list -A
