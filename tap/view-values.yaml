@@ -2,7 +2,7 @@ profile: view
 ceip_policy_disclosed: TRUE # Installation fails if this is not set to true. Not a string.
 
 shared:
-  ingress_domain: tap2.ullom.xyz
+  ingress_domain: tap2 #.ullom.xyz
 
 contour:
   envoy:
