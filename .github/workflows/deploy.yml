@@ -85,8 +85,9 @@ jobs:
           terraform init
           terraform plan -out tf.plan -detailed-exitcode
           state=$? # 0 = No changes; 1 = Error; 2 = There are changes
-          [[ $state == 1 ]] && exit 1
-          [[ $state == 2 ]] && terraform apply -auto-approve tf.plan
+          echo "'terraform plan' returned a status code of $state."
+          [[ $state == 1 ]] && echo "Exiting" && exit 1
+          [[ $state == 2 ]] && echo "Applying plan" && terraform apply -auto-approve tf.plan
           popd
       
       - name: Get terraform output
