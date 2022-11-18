@@ -22,5 +22,4 @@ resource "azurerm_kubernetes_cluster" "default" {
 
 output "cluster_name" {
   value = azurerm_kubernetes_cluster.default.name
-  
 }

@@ -79,6 +79,16 @@ jobs:
           pivnet download-product-files --product-slug='tanzu-cluster-essentials' --release-version='1.3.0' --product-file-id=1330470
           mkdir $HOME/tanzu-cluster-essentials
           tar -xvf tanzu-cluster-essentials-linux-amd64-1.3.0.tgz -C $HOME/tanzu-cluster-essentials
+
+      - name: Create infra
+        run: |
+          pushd terraform
+          terraform init
+          terraform plan -out tf.plan -detailed-exitcode
+          state=$? # 0 = No changes; 1 = Error; 2 = There are changes
+          [[ $state == 1 ]] && exit 1
+          [[ $state == 2 ]] && terraform apply -auto-approve tf.plan
+          popd
       
       - name: Get terraform output
         run: |
