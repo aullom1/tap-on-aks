@@ -19,7 +19,7 @@ env:
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ARM_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_ACCESS_KEY }}
   TF_VAR_azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-  TF_VAR_azure_subscription_id: 
+  TF_VAR_azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   TF_VAR_azure_sp_client_id: ${{ secrets.AZURE_SP_CLIENT_ID }}
   TF_VAR_azure_sp_client_secret: ${{ secrets.AZURE_SP_CLIENT_SECRET }}
   INSTALL_BUNDLE: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:e00f33b92d418f49b1af79f42cb13d6765f1c8c731f4528dfff8343af042dc3e
