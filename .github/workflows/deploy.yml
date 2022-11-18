@@ -83,7 +83,7 @@ jobs:
         run: |
           pushd terraform
           terraform init
-          terraform plan -out tf.plan -detailed-exitcode
+          (terraform plan -out tf.plan -detailed-exitcode)
           state=$? # 0 = No changes; 1 = Error; 2 = There are changes
           echo "'terraform plan' returned a status code of $state."
           [[ $state == 1 ]] && echo "Exiting" && exit 1
