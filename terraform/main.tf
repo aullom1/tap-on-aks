@@ -42,17 +42,17 @@ resource "azurerm_container_registry" "acr" {
   sku                    = "Standard"
 }
 
-# module "view_cluster" {
-#   depends_on = [azurerm_resource_group.default]
-#   source = "./aks"
+module "view_cluster" {
+  depends_on = [azurerm_resource_group.default]
+  source = "./aks"
 
-#   resource_group_name    = azurerm_resource_group.default.name
-#   location               = azurerm_resource_group.default.location
-#   cluster_name           = "view"
-#   node_count             = 2
-#   # vm_size                = var.vm_size
-#   cluster_profile        = "view"
-# }
+  resource_group_name    = azurerm_resource_group.default.name
+  location               = azurerm_resource_group.default.location
+  cluster_name           = "view"
+  node_count             = 2
+  # vm_size                = var.vm_size
+  cluster_profile        = "view"
+}
 
 # module "build_cluster" {
 #   depends_on = [azurerm_resource_group.default]
