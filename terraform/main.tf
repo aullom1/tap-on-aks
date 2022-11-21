@@ -102,9 +102,9 @@ output "container_registry_hostname" {
   value = azurerm_container_registry.acr.login_server
 }
 
-# output "view_cluster_name" {
-#   value = module.view_cluster.cluster_name
-# }
+output "view_cluster_name" {
+  value = module.view_cluster.cluster_name
+}
 
 # output "build_cluster_name" {
 #   value = module.build_cluster.cluster_name
