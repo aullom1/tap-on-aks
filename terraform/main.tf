@@ -34,29 +34,36 @@ resource "azurerm_resource_group" "default" {
   }
 }
 
-module "view_cluster" {
-  depends_on = [azurerm_resource_group.default]
-  source = "./aks"
-
+resource "azurerm_container_registry" "acr" {
+  depends_on             = [azurerm_resource_group.default]
   resource_group_name    = azurerm_resource_group.default.name
   location               = azurerm_resource_group.default.location
-  cluster_name           = "view"
-  node_count             = 2
-  # vm_size                = var.vm_size
-  cluster_profile        = "view"
+  name                   = "acrtapdemo"
 }
 
-module "build_cluster" {
-  depends_on = [azurerm_resource_group.default]
-  source = "./aks"
+# module "view_cluster" {
+#   depends_on = [azurerm_resource_group.default]
+#   source = "./aks"
 
-  resource_group_name    = azurerm_resource_group.default.name
-  location               = azurerm_resource_group.default.location
-  cluster_name           = "build"
-  node_count             = 2
-  # vm_size                = var.vm_size
-  cluster_profile        = "build"
-}
+#   resource_group_name    = azurerm_resource_group.default.name
+#   location               = azurerm_resource_group.default.location
+#   cluster_name           = "view"
+#   node_count             = 2
+#   # vm_size                = var.vm_size
+#   cluster_profile        = "view"
+# }
+
+# module "build_cluster" {
+#   depends_on = [azurerm_resource_group.default]
+#   source = "./aks"
+
+#   resource_group_name    = azurerm_resource_group.default.name
+#   location               = azurerm_resource_group.default.location
+#   cluster_name           = "build"
+#   node_count             = 2
+#   # vm_size                = var.vm_size
+#   cluster_profile        = "build"
+# }
 
 # module "run_cluster" {
 #   depends_on = [azurerm_resource_group.default]
@@ -86,9 +93,17 @@ output "resource_group_name" {
   value = azurerm_resource_group.default.name
 }
 
-output "view_cluster_name" {
-  value = module.view_cluster.cluster_name
+output "container_registry_name" {
+  value = azurerm_container_registry.acr.name
 }
+
+output "container_registry_hostname" {
+  value = azurerm_container_registry.acr.login_server
+}
+
+# output "view_cluster_name" {
+#   value = module.view_cluster.cluster_name
+# }
 
 # output "build_cluster_name" {
 #   value = module.build_cluster.cluster_name

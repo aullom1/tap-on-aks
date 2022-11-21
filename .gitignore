@@ -1,5 +1,6 @@
 notes.md
 **/*.tfstate
+**/*.plan
 **/*.terraform
 **/*.terraform.lock.hcl
 **/*.backup
