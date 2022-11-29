@@ -110,8 +110,8 @@ jobs:
         run: |
           az acr login -n $SHARED_CONTAINER_REGISTRY_NAME
           docker login $TANZU_REGISTRY_HOSTNAME -u $TANZU_REGISTRY_USERNAME -p $TANZU_REGISTRY_PASSWORD
-          imgpkg copy -b registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:${TAP_VERSION} --to-repo ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/tap-packages
-          imgpkg copy -b $INSTALL_BUNDLE --to-repo ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/cluster-essentials-bundle
+          imgpkg copy -b registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:${TAP_VERSION} --to-repo ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/tap-packages --include-non-distributable-layers
+          imgpkg copy -b $INSTALL_BUNDLE --to-repo ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/cluster-essentials-bundle --include-non-distributable-layers
           echo "INSTALL_BUNDLE=${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/cluster-essentials-bundle@sha256:e00f33b92d418f49b1af79f42cb13d6765f1c8c731f4528dfff8343af042dc3e" >> $GITHUB_ENV
         
       - name: Install cluster essentials on 'view' cluster
@@ -135,7 +135,7 @@ jobs:
             --yes \
             --namespace tap-install
           tanzu package repository add tanzu-tap-repository \
-            --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/tanzu-application-platform/tap-packages:$TAP_VERSION \
+            --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/vmware/tap-packages:$TAP_VERSION \
             --namespace tap-install \
             --wait
           tanzu package repository get tanzu-tap-repository --namespace tap-install
