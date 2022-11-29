@@ -135,7 +135,7 @@ jobs:
             --yes \
             --namespace tap-install
           tanzu package repository add tanzu-tap-repository \
-            --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/vmware/tap-packages:$TAP_VERSION \
+            --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/tap-packages:$TAP_VERSION \
             --namespace tap-install \
             --wait
           tanzu package repository get tanzu-tap-repository --namespace tap-install
@@ -171,18 +171,20 @@ jobs:
             --yes \
             --namespace tap-install
           tanzu package repository add tanzu-tap-repository \
-            --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/vmware/tap-packages:$TAP_VERSION \
+            --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/tap-packages:$TAP_VERSION \
             --namespace tap-install \
             --wait
           tanzu package repository get tanzu-tap-repository --namespace tap-install
           tanzu package available list --namespace tap-install
 
-      # - name: 'Deploy TAP profile: build'
-      #   run: |
-      #     # az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
-      #     pushd tap
-      #     tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file build-values.yaml -n tap-install
-      #     popd
-      #     tanzu package installed get tap -n tap-install
-      #     tanzu package installed list -A
+      - name: 'Deploy TAP profile: build'
+        run: |
+          # az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
+          pushd tap
+          envsubst < build-values.yaml > build-values-final.yaml
+          tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file build-values-final.yaml -n tap-install
+          rm build-values-final.yaml
+          popd
+          tanzu package installed get tap -n tap-install
+          tanzu package installed list -A
           
