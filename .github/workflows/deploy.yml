@@ -150,32 +150,32 @@ jobs:
           tanzu package installed get tap -n tap-install
           tanzu package installed list -A
         
-      # - name: Install cluster essentials on 'build' cluster
-      #   run: |
-      #     [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
-      #     [[ -z "$BUILD_CLUSTER_NAME" ]] && echo 'BUILD_CLUSTER_NAME must be set.' && exit 1
-      #     az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
-      #     pushd $HOME/tanzu-cluster-essentials
-      #     ./install.sh --yes
-      #     popd
+      - name: Install cluster essentials on 'build' cluster
+        run: |
+          [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
+          [[ -z "$BUILD_CLUSTER_NAME" ]] && echo 'BUILD_CLUSTER_NAME must be set.' && exit 1
+          az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
+          pushd $HOME/tanzu-cluster-essentials
+          ./install.sh --yes
+          popd
 
-      # - name: Add TAP package repository on 'build' cluster
-      #   run: |
-      #     az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
-      #     [[ -z "$(kubectl get ns | grep 'tap-install')" ]] && kubectl create ns tap-install
-      #     tanzu secret registry add tap-registry \
-      #       --username ${INSTALL_REGISTRY_USERNAME} \
-      #       --password ${INSTALL_REGISTRY_PASSWORD} \
-      #       --server ${INSTALL_REGISTRY_HOSTNAME} \
-      #       --export-to-all-namespaces \
-      #       --yes \
-      #       --namespace tap-install
-      #     tanzu package repository add tanzu-tap-repository \
-      #       --url ${INSTALL_REGISTRY_HOSTNAME}/tanzu-application-platform/tap-packages:$TAP_VERSION \
-      #       --namespace tap-install \
-      #       --wait
-      #     tanzu package repository get tanzu-tap-repository --namespace tap-install
-      #     tanzu package available list --namespace tap-install
+      - name: Add TAP package repository on 'build' cluster
+        run: |
+          az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
+          [[ -z "$(kubectl get ns | grep 'tap-install')" ]] && kubectl create ns tap-install
+          tanzu secret registry add tap-registry \
+            --username ${AZURE_SP_CLIENT_ID} \
+            --password ${AZURE_SP_CLIENT_SECRET} \
+            --server ${SHARED_CONTAINER_REGISTRY_HOSTNAME} \
+            --export-to-all-namespaces \
+            --yes \
+            --namespace tap-install
+          tanzu package repository add tanzu-tap-repository \
+            --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/vmware/tap-packages:$TAP_VERSION \
+            --namespace tap-install \
+            --wait
+          tanzu package repository get tanzu-tap-repository --namespace tap-install
+          tanzu package available list --namespace tap-install
 
       # - name: 'Deploy TAP profile: build'
       #   run: |

@@ -54,17 +54,17 @@ module "view_cluster" {
   cluster_profile        = "view"
 }
 
-# module "build_cluster" {
-#   depends_on = [azurerm_resource_group.default]
-#   source = "./aks"
+module "build_cluster" {
+  depends_on = [azurerm_resource_group.default]
+  source = "./aks"
 
-#   resource_group_name    = azurerm_resource_group.default.name
-#   location               = azurerm_resource_group.default.location
-#   cluster_name           = "build"
-#   node_count             = 2
-#   # vm_size                = var.vm_size
-#   cluster_profile        = "build"
-# }
+  resource_group_name    = azurerm_resource_group.default.name
+  location               = azurerm_resource_group.default.location
+  cluster_name           = "build"
+  node_count             = 2
+  # vm_size                = var.vm_size
+  cluster_profile        = "build"
+}
 
 # module "run_cluster" {
 #   depends_on = [azurerm_resource_group.default]
@@ -106,9 +106,9 @@ output "view_cluster_name" {
   value = module.view_cluster.cluster_name
 }
 
-# output "build_cluster_name" {
-#   value = module.build_cluster.cluster_name
-# }
+output "build_cluster_name" {
+  value = module.build_cluster.cluster_name
+}
 
 # output "run_cluster_name" {
 #   value = module.run_cluster.cluster_name
