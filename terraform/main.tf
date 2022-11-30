@@ -74,7 +74,7 @@ module "run_cluster" {
   location               = azurerm_resource_group.default.location
   cluster_name           = "run"
   node_count             = 2
-  # vm_size                = var.vm_size
+  vm_size                = "Standard_D2d_v5"
   cluster_profile        = "run"
 }
 
