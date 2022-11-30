@@ -101,6 +101,7 @@ jobs:
           echo "RESOURCE_GROUP=$(terraform output --raw resource_group_name)" >> $GITHUB_ENV
           echo "VIEW_CLUSTER_NAME=$(terraform output --raw view_cluster_name)" >> $GITHUB_ENV
           echo "BUILD_CLUSTER_NAME=$(terraform output --raw build_cluster_name)" >> $GITHUB_ENV
+          echo "RUN_CLUSTER_NAME=$(terraform output --raw run_cluster_name)" >> $GITHUB_ENV
           echo "SHARED_CONTAINER_REGISTRY_NAME=$(terraform output --raw container_registry_name)" >> $GITHUB_ENV
           echo "SHARED_CONTAINER_REGISTRY_HOSTNAME=$(terraform output --raw container_registry_hostname)" >> $GITHUB_ENV
           echo "INSTALL_REGISTRY_HOSTNAME=$(terraform output --raw container_registry_hostname)" >> $GITHUB_ENV
@@ -197,44 +198,39 @@ jobs:
         
       ## RUN CLUSTER ##########################################################
 
-      # - name: Install cluster essentials on 'run' cluster
-      #   run: |
-      #     [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
-      #     [[ -z "$BUILD_CLUSTER_NAME" ]] && echo 'BUILD_CLUSTER_NAME must be set.' && exit 1
-      #     az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
-      #     pushd $HOME/tanzu-cluster-essentials
-      #     ./install.sh --yes
-      #     popd
+      - name: Install cluster essentials on 'run' cluster
+        run: |
+          [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
+          [[ -z "$RUN_CLUSTER_NAME" ]] && echo 'RUN_CLUSTER_NAME must be set.' && exit 1
+          az aks get-credentials -g $RESOURCE_GROUP -n $RUN_CLUSTER_NAME --admin --overwrite-existing
+          pushd $HOME/tanzu-cluster-essentials
+          ./install.sh --yes
+          popd
 
-      # - name: Add TAP package repository on 'run' cluster
-      #   run: |
-      #     az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
-      #     [[ -z "$(kubectl get ns | grep 'tap-install')" ]] && kubectl create ns tap-install
-      #     tanzu secret registry add tap-registry \
-      #       --username ${AZURE_SP_CLIENT_ID} \
-      #       --password ${AZURE_SP_CLIENT_SECRET} \
-      #       --server ${SHARED_CONTAINER_REGISTRY_HOSTNAME} \
-      #       --export-to-all-namespaces \
-      #       --yes \
-      #       --namespace tap-install
-      #     tanzu package repository add tanzu-tap-repository \
-      #       --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/tap-packages:$TAP_VERSION \
-      #       --namespace tap-install \
-      #       --wait
-      #     tanzu package repository get tanzu-tap-repository --namespace tap-install
-      #     tanzu package available list --namespace tap-install
+      - name: Add TAP package repository on 'run' cluster
+        run: |
+          az aks get-credentials -g $RESOURCE_GROUP -n $RUN_CLUSTER_NAME --admin --overwrite-existing
+          [[ -z "$(kubectl get ns | grep 'tap-install')" ]] && kubectl create ns tap-install
+          tanzu secret registry add tap-registry \
+            --username ${AZURE_SP_CLIENT_ID} \
+            --password ${AZURE_SP_CLIENT_SECRET} \
+            --server ${SHARED_CONTAINER_REGISTRY_HOSTNAME} \
+            --export-to-all-namespaces \
+            --yes \
+            --namespace tap-install
+          tanzu package repository add tanzu-tap-repository \
+            --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/tap-packages:$TAP_VERSION \
+            --namespace tap-install \
+            --wait
+          tanzu package repository get tanzu-tap-repository --namespace tap-install
+          tanzu package available list --namespace tap-install
 
-      # - name: 'Deploy TAP profile: run'
-      #   run: |
-      #     # az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
-      #     kubectl get ns dev || state=$? # 1 = Namespace not found
-      #     echo "'kubectl get ns dev' returned a status code of $state."
-      #     [[ $state == 1 ]] && kubectl create ns dev
-      #     pushd tap
-      #     envsubst < build-values.yaml > build-values-final.yaml
-      #     tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file build-values-final.yaml -n tap-install
-      #     rm build-values-final.yaml
-      #     popd
-      #     tanzu package installed get tap -n tap-install
-      #     tanzu package installed list -A
+      - name: 'Deploy TAP profile: run'
+        run: |
+          # az aks get-credentials -g $RESOURCE_GROUP -n $RUN_CLUSTER_NAME --admin --overwrite-existing
+          pushd tap
+          tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file run-values.yaml -n tap-install
+          popd
+          tanzu package installed get tap -n tap-install
+          tanzu package installed list -A
           
