@@ -1,0 +1,18 @@
+profile: run
+ceip_policy_disclosed: TRUE # Installation fails if this is not set to true. Not a string.
+
+shared:
+  ingress_domain: tap2.ullom.xyz
+
+supply_chain: testing_scanning
+
+contour:
+  envoy:
+    service:
+      type: LoadBalancer # NodePort can be used if your Kubernetes cluster doesn't support LoadBalancing.
+
+appliveview_connector:
+  backend:
+    sslDisabled: FALSE
+    ingressEnabled: true
+    host: appliveview.tap2.ullom.xyz

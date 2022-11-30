@@ -114,6 +114,8 @@ jobs:
           imgpkg copy -b $INSTALL_BUNDLE --to-repo ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/cluster-essentials-bundle --include-non-distributable-layers
           echo "INSTALL_BUNDLE=${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/cluster-essentials-bundle@sha256:e00f33b92d418f49b1af79f42cb13d6765f1c8c731f4528dfff8343af042dc3e" >> $GITHUB_ENV
         
+      ## VIEW CLUSTER #########################################################
+
       - name: Install cluster essentials on 'view' cluster
         run: |
           [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
@@ -150,6 +152,8 @@ jobs:
           tanzu package installed get tap -n tap-install
           tanzu package installed list -A
         
+      ## BUILD CLUSTER ########################################################
+
       - name: Install cluster essentials on 'build' cluster
         run: |
           [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
@@ -180,6 +184,9 @@ jobs:
       - name: 'Deploy TAP profile: build'
         run: |
           # az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
+          kubectl get ns dev || state=$? # 1 = Namespace not found
+          echo "'kubectl get ns dev' returned a status code of $state."
+          [[ $state == 1 ]] && kubectl create ns dev
           pushd tap
           envsubst < build-values.yaml > build-values-final.yaml
           tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file build-values-final.yaml -n tap-install
@@ -187,4 +194,47 @@ jobs:
           popd
           tanzu package installed get tap -n tap-install
           tanzu package installed list -A
+        
+      ## RUN CLUSTER ##########################################################
+
+      # - name: Install cluster essentials on 'run' cluster
+      #   run: |
+      #     [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
+      #     [[ -z "$BUILD_CLUSTER_NAME" ]] && echo 'BUILD_CLUSTER_NAME must be set.' && exit 1
+      #     az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
+      #     pushd $HOME/tanzu-cluster-essentials
+      #     ./install.sh --yes
+      #     popd
+
+      # - name: Add TAP package repository on 'run' cluster
+      #   run: |
+      #     az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
+      #     [[ -z "$(kubectl get ns | grep 'tap-install')" ]] && kubectl create ns tap-install
+      #     tanzu secret registry add tap-registry \
+      #       --username ${AZURE_SP_CLIENT_ID} \
+      #       --password ${AZURE_SP_CLIENT_SECRET} \
+      #       --server ${SHARED_CONTAINER_REGISTRY_HOSTNAME} \
+      #       --export-to-all-namespaces \
+      #       --yes \
+      #       --namespace tap-install
+      #     tanzu package repository add tanzu-tap-repository \
+      #       --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/tap-packages:$TAP_VERSION \
+      #       --namespace tap-install \
+      #       --wait
+      #     tanzu package repository get tanzu-tap-repository --namespace tap-install
+      #     tanzu package available list --namespace tap-install
+
+      # - name: 'Deploy TAP profile: run'
+      #   run: |
+      #     # az aks get-credentials -g $RESOURCE_GROUP -n $BUILD_CLUSTER_NAME --admin --overwrite-existing
+      #     kubectl get ns dev || state=$? # 1 = Namespace not found
+      #     echo "'kubectl get ns dev' returned a status code of $state."
+      #     [[ $state == 1 ]] && kubectl create ns dev
+      #     pushd tap
+      #     envsubst < build-values.yaml > build-values-final.yaml
+      #     tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file build-values-final.yaml -n tap-install
+      #     rm build-values-final.yaml
+      #     popd
+      #     tanzu package installed get tap -n tap-install
+      #     tanzu package installed list -A
           
