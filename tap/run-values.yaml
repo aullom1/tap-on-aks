@@ -4,7 +4,10 @@ ceip_policy_disclosed: TRUE # Installation fails if this is not set to true. Not
 shared:
   ingress_domain: tap2.ullom.xyz
 
-supply_chain: testing_scanning
+supply_chain: basic
+
+excluded_packages:
+- policy.apps.tanzu.vmware.com
 
 contour:
   envoy:

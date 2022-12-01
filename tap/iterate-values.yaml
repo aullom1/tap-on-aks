@@ -1,0 +1,42 @@
+profile: iterate
+
+shared:
+  ingress_domain: "tap2.ullom.xyz"
+  image_registry:
+    project_path: "acrtapdemo.azurecr.io/tap-demo" # To be used by Build Service by appending "/buildservice" and used by Supply chain by appending "/workloads".
+    username: "${AZURE_SP_CLIENT_ID}"
+    password: "${AZURE_SP_CLIENT_SECRET}"
+
+ceip_policy_disclosed: TRUE # Installation fails if this is not set to true. Not a string.
+
+# The above shared keys may be overridden in the below section.
+
+# buildservice: # Optional if the corresponding shared keys are provided.
+#   kp_default_repository: "KP-DEFAULT-REPO"
+#   kp_default_repository_username: "KP-DEFAULT-REPO-USERNAME"
+#   kp_default_repository_password: "KP-DEFAULT-REPO-PASSWORD"
+
+supply_chain: basic
+ootb_supply_chain_basic: # Optional if the shared above mentioned shared keys are provided.
+  registry:
+    server: "${INSTALL_REGISTRY_HOSTNAME}"
+    repository: "tap-demo"
+  # gitops:
+  #   ssh_secret: "SSH-SECRET-KEY" # (Optional) Defaults to "".
+
+image_policy_webhook:
+  allow_unmatched_tags: true
+
+contour:
+  envoy:
+    service:
+      type: LoadBalancer # (Optional) Defaults to LoadBalancer.
+
+# cnrs:
+#   domain_name: "TAP-ITERATE-CNRS-DOMAIN" # Optional if the shared.ingress_domain is provided.
+
+appliveview_connector:
+  backend:
+    sslDisabled: FALSE
+    ingressEnabled: true
+    host: appliveview.tap2.ullom.xyz

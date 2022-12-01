@@ -96,6 +96,7 @@ jobs:
           echo "VIEW_CLUSTER_NAME=$(terraform output --raw view_cluster_name)" >> $GITHUB_ENV
           echo "BUILD_CLUSTER_NAME=$(terraform output --raw build_cluster_name)" >> $GITHUB_ENV
           echo "RUN_CLUSTER_NAME=$(terraform output --raw run_cluster_name)" >> $GITHUB_ENV
+          echo "ITERATE_CLUSTER_NAME=$(terraform output --raw iterate_cluster_name)" >> $GITHUB_ENV
           echo "SHARED_CONTAINER_REGISTRY_NAME=$(terraform output --raw container_registry_name)" >> $GITHUB_ENV
           echo "SHARED_CONTAINER_REGISTRY_HOSTNAME=$(terraform output --raw container_registry_hostname)" >> $GITHUB_ENV
           echo "INSTALL_REGISTRY_HOSTNAME=$(terraform output --raw container_registry_hostname)" >> $GITHUB_ENV
@@ -224,6 +225,44 @@ jobs:
           # az aks get-credentials -g $RESOURCE_GROUP -n $RUN_CLUSTER_NAME --admin --overwrite-existing
           pushd tap
           tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file run-values.yaml -n tap-install
+          popd
+          tanzu package installed get tap -n tap-install
+          tanzu package installed list -A
+        
+      ## ITERATE CLUSTER ######################################################
+
+      - name: Install cluster essentials on 'iterate' cluster
+        run: |
+          [[ -z "$RESOURCE_GROUP" ]] && echo 'RESOURCE_GROUP must be set.' && exit 1
+          [[ -z "$ITERATE_CLUSTER_NAME" ]] && echo 'ITERATE_CLUSTER_NAME must be set.' && exit 1
+          az aks get-credentials -g $RESOURCE_GROUP -n $ITERATE_CLUSTER_NAME --admin --overwrite-existing
+          pushd $HOME/tanzu-cluster-essentials
+          ./install.sh --yes
+          popd
+
+      - name: Add TAP package repository on 'iterate' cluster
+        run: |
+          az aks get-credentials -g $RESOURCE_GROUP -n $ITERATE_CLUSTER_NAME --admin --overwrite-existing
+          [[ -z "$(kubectl get ns | grep 'tap-install')" ]] && kubectl create ns tap-install
+          tanzu secret registry add tap-registry \
+            --username ${AZURE_SP_CLIENT_ID} \
+            --password ${AZURE_SP_CLIENT_SECRET} \
+            --server ${SHARED_CONTAINER_REGISTRY_HOSTNAME} \
+            --export-to-all-namespaces \
+            --yes \
+            --namespace tap-install
+          tanzu package repository add tanzu-tap-repository \
+            --url ${SHARED_CONTAINER_REGISTRY_HOSTNAME}/${SHARED_INSTALL_REPO}/tap-packages:$TAP_VERSION \
+            --namespace tap-install \
+            --wait
+          tanzu package repository get tanzu-tap-repository --namespace tap-install
+          tanzu package available list --namespace tap-install
+
+      - name: 'Deploy TAP profile: iterate'
+        run: |
+          # az aks get-credentials -g $RESOURCE_GROUP -n $ITERATE_CLUSTER_NAME --admin --overwrite-existing
+          pushd tap
+          tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file iterate-values.yaml -n tap-install
           popd
           tanzu package installed get tap -n tap-install
           tanzu package installed list -A
