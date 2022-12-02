@@ -85,7 +85,7 @@ module "iterate_cluster" {
   resource_group_name    = azurerm_resource_group.default.name
   location               = azurerm_resource_group.default.location
   cluster_name           = "iterate"
-  node_count             = 2
+  node_count             = 5
   # vm_size                = var.vm_size
   cluster_profile        = "iterate"
 }
