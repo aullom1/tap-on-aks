@@ -262,7 +262,9 @@ jobs:
         run: |
           # az aks get-credentials -g $RESOURCE_GROUP -n $ITERATE_CLUSTER_NAME --admin --overwrite-existing
           pushd tap
-          tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file iterate-values.yaml -n tap-install
+          envsubst < iterate-values.yaml > iterate-values-final.yaml
+          tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file iterate-values-final.yaml -n tap-install
+          rm iterate-values-final.yaml
           popd
           tanzu package installed get tap -n tap-install
           tanzu package installed list -A
