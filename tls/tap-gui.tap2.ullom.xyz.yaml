@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tap-gui-tap2-ullom-xyz
+  namespace: default
+spec:
+  commonName: tap-gui.tap2.ullom.xyz
+  dnsNames:
+    - tap-gui.tap2.ullom.xyz
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  secretName: tap-gui-tap2-ullom-xyz

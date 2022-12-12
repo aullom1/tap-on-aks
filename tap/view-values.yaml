@@ -11,6 +11,9 @@ contour:
 
 tap_gui:
   service_type: ClusterIP
+  tls:
+    namespace: default
+    secretName: tap-gui-tap2-ullom-xyz
   app_config:
     # app:
     #   baseUrl: https://tap-gui.tap2.ullom.xyz
