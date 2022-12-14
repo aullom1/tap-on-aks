@@ -7,7 +7,7 @@ env:
   AZURE_SP_CLIENT_ID: ${{ secrets.AZURE_SP_CLIENT_ID }}
   AZURE_SP_CLIENT_SECRET: ${{ secrets.AZURE_SP_CLIENT_SECRET }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
+  ARM_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_ACCESS_KEY }}
 
 jobs:
   AddTls:
