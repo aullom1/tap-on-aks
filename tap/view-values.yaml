@@ -23,6 +23,18 @@ tap_gui:
       locations:
         - type: url
           target: https://github.com/aullom1/tap-demo/blob/main/catalog/catalog-info.yaml
+    auth:
+      allowGuestAccess: false
+      environment: development
+      providers:
+        auth0:
+          development:
+            clientId: ${AUTH0_CLIENT_ID}
+            clientSecret: ${AUTH0_CLIENT_SECRET}
+            domain: ullom.us.auth0.com
+            # audience: ${AUTH_AUTH0_AUDIENCE}
+            # connection: ${AUTH_AUTH0_CONNECTION}
+            # connectionScope: ${AUTH_AUTH0_CONNECTION_SCOPE}
     # backend:
     #   baseUrl: https://tap-gui.tap2.ullom.xyz
     #   cors:
