@@ -17,6 +17,8 @@ tap_gui:
   app_config:
     # app:
     #   baseUrl: https://tap-gui.tap2.ullom.xyz
+    organization:
+      name: Magic Camp
     catalog:
       locations:
         - type: url

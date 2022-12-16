@@ -23,14 +23,14 @@ docker build -t act:aaron-latest --platform linux/x86_64 .
 docker pull docker
 docker run -it --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /Users/uaaron/git/tap-on-aks:/home --platform linux/x86_64 docker
 
-## Second, install curl and act.
+# ## Second, install curl and act.
 apk update
 apk add curl
 curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sh
 cd /home
 
 ## Run your action using the image you built earlier.
-act workflow_dispatch --secret-file /home/.local/secrets.env -P ubuntu-latest=act:aaron-latest -j AddTls
+act workflow_dispatch --secret-file /home/.local/secrets.env -P ubuntu-latest=act:aaron-latest -j ConfigurePinnipedSupervisor
 
 
 

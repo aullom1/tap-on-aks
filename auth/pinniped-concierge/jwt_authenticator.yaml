@@ -1,0 +1,8 @@
+---
+apiVersion: authentication.concierge.pinniped.dev/v1alpha1
+kind: JWTAuthenticator
+metadata:
+  name: pinniped-jwt-authenticator
+spec:
+  issuer: https://pinniped-supervisor.tap2.ullom.xyz
+  audience: concierge

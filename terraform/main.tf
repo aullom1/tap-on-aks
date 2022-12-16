@@ -49,7 +49,7 @@ module "view_cluster" {
   resource_group_name    = azurerm_resource_group.default.name
   location               = azurerm_resource_group.default.location
   cluster_name           = "view"
-  node_count             = 2
+  node_count             = 3
   # vm_size                = var.vm_size
   cluster_profile        = "view"
 }

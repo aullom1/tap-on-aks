@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinniped-supervisor
+  namespace: pinniped-supervisor
+  annotations:
+    kapp.k14s.io/change-group: "pinniped-supervisor.tap.ullom.xyz/ingress"
+    kapp.k14s.io/change-rule: "upsert after upserting pinniped-supervisor.tap.ullom.xyz/certificate"
+spec:
+  ports:
+  - name: pinniped-supervisor
+    port: 8443
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: pinniped-supervisor
+
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: pinniped-supervisor
+  annotations:
+    kapp.k14s.io/change-group: "pinniped-supervisor.tap.ullom.xyz/ingress"
+    kapp.k14s.io/change-rule: "upsert after upserting pinniped-supervisor.tap.ullom.xyz/certificate"
+spec:
+  virtualhost:
+    fqdn: pinniped-supervisor.tap2.ullom.xyz
+    tls:
+      secretName: pinniped-supervisor-tls-cert
+  routes:
+  - services:
+    - name: pinniped-supervisor
+      port: 8443
