@@ -18,16 +18,11 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: Install Carvel tools
+        run: ./auth/install-carvel.sh
+
       - name: Add pinniped-supervisor
         run: ./auth/pinniped-supervisor/install.sh
-
-  ConfigurePinnipedConcierge:
-    name: Configure pinniped-concierge
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
-      - name: Add pinniped-supervisor
+      
+      - name: Add pinniped-concierge
         run: ./auth/pinniped-concierge/install.sh
