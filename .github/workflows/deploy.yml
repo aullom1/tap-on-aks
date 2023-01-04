@@ -141,6 +141,10 @@ jobs:
 
       - name: 'Deploy TAP profile: view'
         run: |
+          echo "Setup auth0 variables."
+          export AUTH0_CLIENT_ID=$(az keyvault secret show -n auth0-client-id --vault-name kv-tanzu | jq -r .value | base64 -w0)
+          export AUTH0_CLIENT_SECRET=$(az keyvault secret show -n auth0-client-secret --vault-name kv-tanzu | jq -r .value | base64 -w0)
+
           # az aks get-credentials -g $RESOURCE_GROUP -n $VIEW_CLUSTER_NAME --admin --overwrite-existing
           pushd tap
           tanzu package install tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file view-values.yaml -n tap-install

@@ -10,8 +10,8 @@ env:
   ARM_ACCESS_KEY: ${{ secrets.AZURE_STORAGE_ACCOUNT_ACCESS_KEY }}
 
 jobs:
-  ConfigurePinnipedSupervisor:
-    name: Configure pinniped-supervisor
+  ConfigurePinniped:
+    name: Configure pinniped
     runs-on: ubuntu-latest
 
     steps:
