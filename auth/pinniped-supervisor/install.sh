@@ -18,8 +18,8 @@ export VIEW_CLUSTER_NAME=$(terraform output --raw view_cluster_name)
 popd
 
 echo "Setup auth0 variables."
-export AUTH0_CLIENT_ID=$(az keyvault secret show -n auth0-client-id --vault-name kv-tanzu | jq -r .value | base64 -w0)
-export AUTH0_CLIENT_SECRET=$(az keyvault secret show -n auth0-client-secret --vault-name kv-tanzu | jq -r .value | base64 -w0)
+export AUTH0_CLIENT_ID=$(az keyvault secret show -n auth0-client-id --vault-name kv-tanzu | jq -r .value)
+export AUTH0_CLIENT_SECRET=$(az keyvault secret show -n auth0-client-secret --vault-name kv-tanzu | jq -r .value)
 
 pushd auth
 
