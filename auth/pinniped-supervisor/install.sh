@@ -25,7 +25,10 @@ pushd auth
 
 echo "Install pinniped-supervisor on view cluster"
 az aks get-credentials -n $VIEW_CLUSTER_NAME -g $RESOURCE_GROUP -a --overwrite
-envsubst < pinniped-supervisor/oidc_identity_provider.yaml > pinniped-supervisor/oidc_identity_provider.yaml
+oidc=$(mktemp)
+envsubst < pinniped-supervisor/oidc_identity_provider.yaml > $oidc
+rm pinniped-supervisor/oidc_identity_provider.yaml
+mv $oidc pinniped-supervisor/oidc_identity_provider.yaml
 kapp deploy -y --app pinniped-supervisor --into-ns pinniped-supervisor -f pinniped-supervisor -f https://get.pinniped.dev/v0.12.0/install-pinniped-supervisor.yaml
 
 popd
