@@ -2,13 +2,17 @@
 
 - Verify feature functionality of clusters
   - View cluster
+    - Proper RBAC
     - Supply chains
     - Security dashboard
     - APIs
     - App accelerators
   - Build cluster
+    - Proper RBAC
   - Run cluster
+    - Proper RBAC
   - Iterate cluster
+    - Proper RBAC
 - Add DNS management
 
 # Build a docker image to use with 'act'
@@ -80,4 +84,16 @@ The `oidc-scopes` argument is necessary.  If you leave it off, then the consumer
 pinniped get kubeconfig \
   --oidc-scopes offline_access,openid,pinniped:request-audience,profile \
   > /tmp/view-kubeconfig
+```
+
+# Deploy the menu-api app
+
+```shell
+tanzu apps workload create menu-api \
+--git-repo https://github.com/aullom1/menu-api \
+--git-branch main \
+--type web \
+--label app.kubernetes.io/part-of=gator-bites \
+--yes \
+--namespace gators
 ```
