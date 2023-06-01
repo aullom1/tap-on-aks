@@ -1,0 +1,29 @@
+tap_gui:
+  app_config:
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+          ## Build cluster
+            - url: ${BUILD_CLUSTER_URL}
+              name: build
+              authProvider: serviceAccount
+              serviceAccountToken: "${BUILD_CLUSTER_TOKEN}"
+              skipTLSVerify: true
+              skipMetricsLookup: true
+          ## Run cluster
+            - url: ${RUN_CLUSTER_URL}
+              name: run
+              authProvider: serviceAccount
+              serviceAccountToken: "${RUN_CLUSTER_TOKEN}"
+              skipTLSVerify: true
+              skipMetricsLookup: true
+          # ## Iterate cluster
+          #   - url: ${ITERATE_CLUSTER_URL}
+          #     name: iterate
+          #     authProvider: serviceAccount
+          #     serviceAccountToken: "${ITERATE_CLUSTER_TOKEN}"
+          #     skipTLSVerify: true
+          #     skipMetricsLookup: true
