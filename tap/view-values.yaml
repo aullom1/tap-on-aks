@@ -39,22 +39,6 @@ tap_gui:
     #   baseUrl: https://tap-gui.tap2.ullom.xyz
     #   cors:
     #     origin: https://tap-gui.tap2.ullom.xyz
-    # kubernetes:
-    #   serviceLocatorMethod:
-    #     type: 'multiTenant'
-    #   clusterLocatorMethods:
-    #     - type: 'config'
-    #       clusters:
-    #         - url: CLUSTER-URL
-    #           name: CLUSTER-NAME # Build profile cluster can go here.
-    #           authProvider: serviceAccount
-    #           serviceAccountToken: CLUSTER-TOKEN
-    #           skipTLSVerify: TRUE-OR-FALSE-VALUE
-    #         - url: CLUSTER-URL
-    #           name: CLUSTER-NAME # Run profile cluster can go here.
-    #           authProvider: serviceAccount
-    #           serviceAccountToken: CLUSTER-TOKEN
-    #           skipTLSVerify: TRUE-OR-FALSE-VALUE
 
 appliveview:
   ingressEnabled: true
