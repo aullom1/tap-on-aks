@@ -86,6 +86,11 @@ jobs:
             tar xz && mv ${BINARY} $HOME/yq
           yq --version
 
+      - name: 'Install tool: moreutils'
+        run: |
+          sudo apt-get update
+          sudo apt-get install moreutils -y
+
       - name: Create infra
         run: |
           pushd terraform
