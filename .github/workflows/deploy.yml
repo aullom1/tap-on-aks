@@ -312,6 +312,7 @@ jobs:
           pushd tap
           echo "Merging linked clusters into the view cluster's yaml."
           yq eval-all '. as $item ireduce ({}; . * $item )' view-values.yaml view-values-partial.yaml > view-values-full.yaml
+          cat view-values-full.yaml
           for cluster_name in $BUILD_CLUSTER_NAME $RUN_CLUSTER_NAME; do
             echo "Getting cluster credentials: $cluster_name."
             az aks get-credentials -n $cluster_name -g $RESOURCE_GROUP --admin --overwrite-existing
@@ -322,6 +323,7 @@ jobs:
               | base64 --decode)
             envsubst < view-values-full.yaml | sponge view-values-full.yaml
           done
+          cat view-values-full.yaml
           kubectl apply -f view-values-full.yaml
           rm view-values-full.yaml
           popd
