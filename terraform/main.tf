@@ -73,7 +73,7 @@ module "run_cluster" {
   resource_group_name    = azurerm_resource_group.default.name
   location               = azurerm_resource_group.default.location
   cluster_name           = "run"
-  node_count             = 4
+  node_count             = 5
   # vm_size                = var.vm_size
   cluster_profile        = "run"
 }
