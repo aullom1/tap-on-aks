@@ -310,20 +310,33 @@ jobs:
       - name: 'Add clusters to TAP GUI'
         run: |
           pushd tap
+          echo "Setup auth0 variables."
+          export AUTH0_CLIENT_ID=$(az keyvault secret show -n auth0-client-id --vault-name kv-tanzu | jq -r .value)
+          export AUTH0_CLIENT_SECRET=$(az keyvault secret show -n auth0-client-secret --vault-name kv-tanzu | jq -r .value)
+          az aks get-credentials -g $RESOURCE_GROUP -n $VIEW_CLUSTER_NAME --admin --overwrite-existing
+          envsubst < view-values.yaml > view-values-auth0.yaml
           echo "Merging linked clusters into the view cluster's yaml."
-          yq eval-all '. as $item ireduce ({}; . * $item )' view-values.yaml view-values-partial.yaml > view-values-full.yaml
-          cat view-values-full.yaml
+          yq eval-all '. as $item ireduce ({}; . * $item )' view-values-auth0.yaml view-values-partial.yaml > view-values-full.yaml
+          # cat view-values-full.yaml
           for cluster_name in $BUILD_CLUSTER_NAME $RUN_CLUSTER_NAME; do
             echo "Getting cluster credentials: $cluster_name."
             az aks get-credentials -n $cluster_name -g $RESOURCE_GROUP --admin --overwrite-existing
             # Get the cluster URL and token
-            CLUSTER_URL=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
-            CLUSTER_TOKEN=$(kubectl -n tap-gui get secret tap-gui-viewer -o=json \
+            export CLUSTER_URL=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
+            export CLUSTER_TOKEN=$(kubectl -n tap-gui get secret tap-gui-viewer -o=json \
               | jq -r '.data["token"]' \
               | base64 --decode)
             envsubst < view-values-full.yaml | sponge view-values-full.yaml
           done
-          cat view-values-full.yaml
+          # cat view-values-full.yaml
           kubectl apply -f view-values-full.yaml
           rm view-values-full.yaml
           popd
+
+
+
+
+
+          #### TODO TODO TODO TODO
+          # Need to redo the view-values.yaml file with envsubst so that ALL env vars are substituted.
+          # 
