@@ -343,7 +343,9 @@ jobs:
             envsubst < view-values-full.yaml | sponge view-values-full.yaml
           done
           # cat view-values-full.yaml
-          kubectl apply -f view-values-full.yaml
+          tanzu package installed update tap -p tap.tanzu.vmware.com -v $TAP_VERSION --values-file view-values-full.yaml -n tap-install
+          tanzu package installed get tap -n tap-install
+          tanzu package installed list -A
           rm view-values-full.yaml
           rm view-values-auth0.yaml
           popd
