@@ -20,10 +20,10 @@ tap_gui:
               serviceAccountToken: "${RUN_CLUSTER_TOKEN}"
               skipTLSVerify: true
               skipMetricsLookup: true
-          # ## Iterate cluster
-          #   - url: ${ITERATE_CLUSTER_URL}
-          #     name: iterate
-          #     authProvider: serviceAccount
-          #     serviceAccountToken: "${ITERATE_CLUSTER_TOKEN}"
-          #     skipTLSVerify: true
-          #     skipMetricsLookup: true
+          ## Iterate cluster
+            - url: ${ITERATE_CLUSTER_URL}
+              name: iterate
+              authProvider: serviceAccount
+              serviceAccountToken: "${ITERATE_CLUSTER_TOKEN}"
+              skipTLSVerify: true
+              skipMetricsLookup: true

@@ -332,7 +332,7 @@ jobs:
           echo "Merging linked clusters into the view cluster's yaml."
           yq eval-all '. as $item ireduce ({}; . * $item )' view-values-auth0.yaml view-values-partial.yaml > view-values-full.yaml
           # cat view-values-full.yaml
-          for cluster_name in $BUILD_CLUSTER_NAME $RUN_CLUSTER_NAME; do
+          for cluster_name in $BUILD_CLUSTER_NAME $RUN_CLUSTER_NAME $ITERATE_CLUSTER_NAME; do
             echo "Getting cluster credentials: $cluster_name."
             az aks get-credentials -n $cluster_name -g $RESOURCE_GROUP --admin --overwrite-existing
             # Get the cluster URL and token
@@ -349,11 +349,3 @@ jobs:
           rm view-values-full.yaml
           rm view-values-auth0.yaml
           popd
-
-
-
-
-
-          #### TODO TODO TODO TODO
-          # Need to redo the view-values.yaml file with envsubst so that ALL env vars are substituted.
-          # 
