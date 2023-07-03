@@ -313,11 +313,11 @@ jobs:
           tanzu package installed get tap -n tap-install
           tanzu package installed list -A
 
-      # - name: Create TAP GUI viewer service account
-      #   run: |
-      #     pushd tap
-      #     kubectl apply -f tap-gui-viewer-service-account-rbac.yaml
-      #     popd
+      - name: Create TAP GUI viewer service account
+        run: |
+          pushd tap
+          kubectl apply -f tap-gui-viewer-service-account-rbac.yaml
+          popd
         
       ## ADD CLUSTERS TO TAP GUI ##############################################
       
