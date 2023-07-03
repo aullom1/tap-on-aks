@@ -98,7 +98,7 @@ jobs:
           wget https://github.com/protocolbuffers/protobuf/releases/download/${VERSION}/${BINARY}.zip -O ${BINARY}.zip
           unzip ${BINARY}.zip
           chmod +x bin/protoc
-          mv bin/protoc $HOME/protoc
+          mv bin/protoc /usr/local/bin/protoc
           protoc --version
           go install github.com/zhufuyi/sponge/cmd/sponge@latest
           sponge init
