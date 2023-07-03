@@ -95,8 +95,9 @@ jobs:
         run: |
           VERSION=v3.20.3
           BINARY=protoc-3.20.3-linux-x86_64
-          wget https://github.com/protocolbuffers/protobuf/releases/download/${VERSION}/${BINARY}.zip -O - | \
-            unzip && mv {BINARY}/bin/protoc $HOME/protoc
+          wget https://github.com/protocolbuffers/protobuf/releases/download/${VERSION}/${BINARY}.zip -O ${BINARY}.zip
+          unzip ${BINARY}.zip
+          mv {BINARY}/bin/protoc $HOME/protoc
           protoc --version
           go install github.com/zhufuyi/sponge/cmd/sponge@latest
           sponge init
