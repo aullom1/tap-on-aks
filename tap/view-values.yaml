@@ -35,6 +35,8 @@ tap_gui:
             # audience: ${AUTH_AUTH0_AUDIENCE}
             # connection: ${AUTH_AUTH0_CONNECTION}
             # connectionScope: ${AUTH_AUTH0_CONNECTION_SCOPE}
+      session:
+        secret: 'authsessionsecret'
     # backend:
     #   baseUrl: https://tap-gui.tap2.ullom.xyz
     #   cors:
