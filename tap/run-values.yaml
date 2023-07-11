@@ -8,6 +8,7 @@ supply_chain: basic
 
 excluded_packages:
 - policy.apps.tanzu.vmware.com
+- external-secrets.apps.tanzu.vmware.com
 
 contour:
   envoy:
